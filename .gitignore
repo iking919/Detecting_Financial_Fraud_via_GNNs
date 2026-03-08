@@ -1,2 +1,4 @@
-data/raw/*
-data/processed/*
+data/raw/ieee_fraud/*
+data/raw/paysim/*
+data/processed/ieee_fraud/*
+data/processed/paysim/*
