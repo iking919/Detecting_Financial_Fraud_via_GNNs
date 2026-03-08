@@ -1,4 +1,7 @@
-data/raw/ieee_fraud/*
-data/raw/paysim/*
-data/processed/ieee_fraud/*
-data/processed/paysim/*
+# Ignore dataset files
+data/raw/*/*
+data/processed/*/*
+
+# Keep placeholder files
+!data/raw/*/.gitkeep
+!data/processed/*/.gitkeep
