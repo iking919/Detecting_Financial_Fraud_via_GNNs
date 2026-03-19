@@ -8,7 +8,7 @@ https://www.kaggle.com/datasets/ealaxi/paysim1
 2. IEEE-CIS Fraud Detection Dataset  
 https://www.kaggle.com/datasets/lnasiri007/ieeecis-fraud-detection
 
-3. Elliptic Data Set
+3. Elliptic Data Set  
 https://www.kaggle.com/datasets/ellipticco/elliptic-data-set
 
 Raw data is not stored in this repository.
