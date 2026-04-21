@@ -1,4 +1,4 @@
-## 📓 Notebooks Overview (Reproducible Pipeline)
+## Notebooks Overview (Reproducible Pipeline)
 
 This folder contains the full end-to-end pipeline for financial fraud detection using both traditional machine learning models and graph neural networks (GNNs). Each notebook is designed to be **self-contained and reproducible**, following a logical progression from data exploration to final evaluation.
 
