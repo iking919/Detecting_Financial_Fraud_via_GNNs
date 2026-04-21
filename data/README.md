@@ -2,42 +2,63 @@
 
 This project uses three public datasets for financial fraud detection:
 
-1. **PaySim Mobile Money Dataset**  
-   [Kaggle link](https://www.kaggle.com/datasets/ealaxi/paysim1)
+1. **PaySim Mobile Money Dataset**
+   https://www.kaggle.com/datasets/ealaxi/paysim1
 
-2. **IEEE-CIS Fraud Detection Dataset**  
-   [Kaggle link](https://www.kaggle.com/datasets/lnasiri007/ieeecis-fraud-detection)  
-   **Note:** This dataset is already split into training and test sets.  
-   We will use `train_transaction.csv` + `train_identity.csv` for training,  
-   and `test_transaction.csv` + `test_identity.csv` for evaluation.
+2. **IEEE-CIS Fraud Detection Dataset**
+   https://www.kaggle.com/datasets/lnasiri007/ieeecis-fraud-detection
 
-3. **Elliptic Data Set**  
-   [Kaggle link](https://www.kaggle.com/datasets/ellipticco/elliptic-data-set)
-
-### Raw Data File Structure
-
-Place the downloaded raw datasets in the following directories:
-
-data/raw/paysim/PS_20174392719_1491204439457_log.csv
-
-data/raw/ieee_fraud/train_identity.csv
-data/raw/ieee_fraud/train_transaction.csv
-data/raw/ieee_fraud/test_identity.csv
-data/raw/ieee_fraud/test_transaction.csv
-
-data/raw/elliptic/elliptic_txs_classes.csv
-data/raw/elliptic/elliptic_txs_edgelist.csv
-data/raw/elliptic/elliptic_txs_features.csv
-
-
-**Note:** Raw data is not stored in this repository.  
+3. **Elliptic Bitcoin Dataset**
+   https://www.kaggle.com/datasets/ellipticco/elliptic-data-set
 
 ---
 
-## Processed Data
+## Data Access (Kaggle API)
 
-After running the preprocessing scripts, the following structured CSVs are generated:
+Raw datasets are **not manually downloaded or stored in this repository**.
+Instead, the pipeline uses a **Kaggle API key (`kaggle.json`)** to programmatically download all datasets during preprocessing.
 
+### Setup
+
+1. Upload your `kaggle.json` file in the notebook environment
+2. The preprocessing notebook will:
+
+   * Authenticate with Kaggle
+   * Download all required datasets
+   * Extract them automatically
+
+---
+
+## Processing Pipeline
+
+All preprocessing is handled in:
+
+```
+notebooks/02_preprocessing.ipynb
+```
+
+### What the pipeline does:
+
+* Downloads raw datasets via Kaggle API
+* Merges and cleans raw files (especially IEEE-CIS)
+* Handles missing values and feature scaling
+* Creates graph structures (nodes + edges)
+* Assigns labels and unique IDs (`tx_id`)
+* Applies dataset-specific fixes (e.g., Elliptic label remapping)
+
+---
+
+## Output Data (Google Drive)
+
+After preprocessing, all processed data is packaged and stored as:
+
+```
+/content/drive/MyDrive/GNN_fraud_Project/processed_data.zip
+```
+
+When extracted, this contains:
+
+```
 data/processed/paysim_nodes.csv
 data/processed/paysim_edges.csv
 
@@ -48,35 +69,58 @@ data/processed/ieee_test_edges.csv
 
 data/processed/elliptic_nodes.csv
 data/processed/elliptic_edges.csv
-
-These CSVs contain normalized features, unique transaction IDs (`tx_id`), and labels (`label`) for supervised learning.
-
----
-
-## Use for Baseline Machine Learning Models
-
-The node CSVs, containing normalized features and labels, can be used directly as tabular datasets for classical machine learning models such as:
-
-- Logistic Regression  
-- K-Nearest Neighbors (KNN)  
-- Decision Trees  
-- Random Forests  
-
-Each row represents a transaction with its relevant features, and the `label` column indicates fraud status.  
-These datasets allow quick training, evaluation, and benchmarking of classical models, helping to establish baselines and identify predictive features.
+```
 
 ---
 
-## Use for Graph Neural Network Models
+## Use for Baseline Models
 
-The combination of **nodes CSVs** and **edges CSVs** provides a complete graph representation suitable for Graph Neural Networks (GNNs) such as:
+The `*_nodes.csv` files are used directly for tabular models:
 
-- Graph Convolutional Networks (GCN)  
-- Graph Attention Networks (GAT)  
-- GraphSAGE  
+* Logistic Regression
+* MLP
+* Random Forest
 
-- **Nodes:** individual transactions with associated features  
-- **Edges:** relationships between transactions (e.g., shared accounts, emails, devices, or fund propagation)  
+Each row represents a transaction with:
 
-These files can be converted to PyTorch Geometric or DGL datasets, allowing models to leverage both node attributes and network topology.  
-GNNs can capture higher-order patterns like coordinated fraudulent behaviors, which classical tabular models may miss.
+* Scaled numerical features
+* `label` (fraud vs non-fraud)
+
+---
+
+## Use for Graph Neural Networks
+
+The combination of node and edge files enables GNN training:
+
+* GCN
+* GAT
+* GraphSAGE
+
+### Structure
+
+* **Nodes:** transaction features
+* **Edges:** relationships between transactions
+
+### Training Setup
+
+* Full-batch and mini-batch training
+* Mask-based splits (`train/val/test`)
+* Imbalance-aware loss functions
+
+---
+
+## Notes
+
+* No raw data is stored in this repository
+* All data is **reproducibly generated via the preprocessing notebook**
+* Google Drive is used to persist processed datasets across sessions
+* This setup ensures consistency across experiments and environments
+
+---
+
+## Summary
+
+* Fully automated data pipeline via Kaggle API
+* Centralized processed dataset (`processed_data.zip`)
+* Supports both tabular ML and graph-based learning
+* Designed for reproducibility in Colab environments
